@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NEON RETRO - N A N A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: #0d001a;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'VT323', monospace;
+      color: #ff00ff;
+      background: radial-gradient(circle at center, #1a0033 0%, #000 80%);
+      image-rendering: pixelated;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: 
+        repeating-linear-gradient(transparent 0px, transparent 2px, rgba(255,0,255,0.06) 2px, rgba(255,0,255,0.06) 4px),
+        repeating-linear-gradient(90deg, transparent 0px, transparent 2px, rgba(0,255,255,0.05) 2px, rgba(0,255,255,0.05) 4px);
+      pointer-events: none;
+      animation: crt-scan 6s linear infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes crt-scan {
+      0% { transform: translateY(-100%); opacity: 0.7; }
+      50% { opacity: 0.4; }
+      100% { transform: translateY(100%); opacity: 0.7; }
+    }
+    .crt-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,0,0,0.8) 100%);
+      box-shadow: inset 0 0 120px rgba(0,0,0,0.9);
+      animation: crt-flicker 0.12s infinite alternate;
+    }
+    @keyframes crt-flicker {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 0.22; }
+    }
+    .janela {
+      width: 94vw;
+      max-width: 1300px;
+      margin: 2vh auto;
+      border: 6px solid #ff00ff;
+      border-image: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff) 1;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 0 40px #ff00ff88, 0 0 80px #00ffff66, inset 0 0 60px rgba(255,0,255,0.3);
+      position: relative;
+      animation: neon-glow 4s ease-in-out infinite alternate;
+    }
+    @keyframes neon-glow {
+      0%   { box-shadow: 0 0 40px #ff00ff88, 0 0 80px #00ffff66, inset 0 0 60px rgba(255,0,255,0.3); }
+      100% { box-shadow: 0 0 70px #ff00ff, 0 0 120px #00ffffaa, inset 0 0 90px rgba(0,255,255,0.4); }
+    }
+    .titlebar {
+      height: 44px;
+      background: linear-gradient(to bottom, #220044, #110022);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 4px solid #00ffff44;
+      position: relative;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 18px;
+      color: #00ffff;
+      text-shadow: 0 0 10px #00ffff, 2px 2px 0 #ff00ff, -2px -2px 0 #ff00ff;
+      letter-spacing: 2px;
+    }
+    .traffic-lights { display: flex; gap: 12px; }
+    .light {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid #000;
+      box-shadow: 0 0 12px currentColor;
+    }
+    .close    { background: #f700ff; color: #ff00bf; }
+    .minimize { background: #9900ff; color: #ff00bf; }
+    .zoom     { background: #001aff; color: #ff00bf; }
+    .filename {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      text-shadow: 0 0 15px #00ffff, 0 0 25px #ff00ff;
+    }
+    .video-area {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background: #000;
+      overflow: hidden;
+      image-rendering: crisp-edges;
+    }
+    .video-area iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      filter: contrast(1.15) saturate(1.3) brightness(1.1);
+    }
+    .bottom-bar {
+      height: 70px;
+      background: rgba(17, 0, 34, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 40px;
+      border-top: 4px solid #ff00ff44;
+      gap: 30px; /* espaço entre os botões */
+    }
+    .btn-ep {
+      background: transparent;
+      border: 4px solid #00ffff;
+      color: #00ffff;
+      padding: 10px 28px;
+      border-radius: 0;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 13px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-shadow: 0 0 10px #00ffff, 2px 2px 0 #ff00ff;
+      box-shadow: 0 0 20px #00ffff88, inset 0 0 10px #ff00ff44;
+      min-width: 110px;
+      text-align: center;
+    }
+    .btn-ep:hover {
+      border-color: #ff00ff;
+      color: #ff00ff;
+      text-shadow: 0 0 15px #ff00ff, 3px 3px 0 #00ffff;
+      box-shadow: 0 0 40px #ff00ff, inset 0 0 20px #00ffff66;
+      transform: scale(1.08);
+    }
+    .btn-ep:disabled {
+      opacity: 0.3;
+      border-color: #444;
+      color: #666;
+      text-shadow: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    /* Botão EXIT - menor e com tom diferente para destacar */
+    .btn-exit {
+      background: transparent;
+      border: 4px solid #ea00ff;
+      color: #a200ff;
+      padding: 8px 20px;
+      font-size: 12px;
+      min-width: 80px;
+      text-shadow: 0 0 8px #ff006a, 1px 1px 0 #9900ff;
+      box-shadow: 0 0 16px #70001e88;
+    }
+    .btn-exit:hover {
+      border-color: #0051ff;
+      color: #006eff;
+      text-shadow: 0 0 12px #002677, 2px 2px 0 #ff0044;
+      box-shadow: 0 0 30px #1900ffaa;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="crt-overlay"></div>
+
+  <div class="janela">
+    <div class="titlebar">
+      <div class="traffic-lights">
+        <div class="light close"></div>
+        <div class="light minimize"></div>
+        <div class="light zoom"></div>
+      </div>
+      <div class="filename" id="titulo">N A N A </div>
+    </div>
+
+    <div class="video-area">
+      <iframe 
+        id="player" 
+        src="" 
+        allow="autoplay; encrypted-media" 
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="btn-ep" id="btn-anterior" onclick="anterior()" disabled>◄ PREV</button>
+      <button class="btn-exit" id="btn-voltar" onclick="voltar()" href="page2.html">EXIT</button> 
+      <button class="btn-ep" id="btn-proximo" onclick="proximo()">NEXT ►</button>
+    </div>
+  </div>
+
+  <script>
+    // ────────────────────────────────────────────────
+    //   EPISÓDIOS DE N A N A
+    // ────────────────────────────────────────────────
+    const episodios = [
+      { titulo: "N A N A EP1",  id: "1zUioIICWtPPlvewa6KSFkUlvbgcuocKF" },
+      { titulo: "N A N A EP2",  id: "1OvvaWeBexCxo6b8_8Ln9LAvb7spkkHgg" },
+      { titulo: "N A N A EP3",  id: "1v4UqJrapxHDY0T5N6RTDQrDblYWTtenC" },
+      { titulo: "N A N A EP4",  id: "187aYkvfx1Pse1WeiOlfCvlGivE3kEsvh" },
+      { titulo: "N A N A EP5",  id: "1biTj9RnIMCqfadnr8eqOydEpZ_PDTZIp" },
+      { titulo: "N A N A EP6",  id: "1fy0yO_WkiNzLyUAfR9KD4nIoLGymKvqB" },
+      { titulo: "N A N A EP7",  id: "1KdtxKj-DvLBSMVUB_CNsEha8pntJAQxD" },
+      { titulo: "N A N A EP8",  id: "13Jz_mVuidzN5HwJDOEaibumyRXaiWaKg" },
+      { titulo: "N A N A EP9",  id: "15wnShKZqdoU9kbzoPqreksDx920vkQqP" },
+      { titulo: "N A N A EP10", id: "1qP11viroBUYWxOoPNPF8e3eRSQ_sivfp" },
+      { titulo: "N A N A EP11", id: "1J3E8Rv4vuFJwjhcWUpEV2qUW0fIbXs-F" },
+      { titulo: "N A N A EP12", id: "1V8xD_w5GFkPa7mdtCODu7LPYS35jdfd2" },
+      { titulo: "N A N A EP13", id: "1WwjpyECfrh3r6iWEdlnblE2OOcys1jGY" },
+      { titulo: "N A N A EP14", id: "1tbJ2_ux6KkoOlmssdn5xPGKie6QBZYyl" },
+      { titulo: "N A N A EP15", id: "1E9WOueCkEChI8Lm_Ph24l3LI6Xnad62x" },
+      { titulo: "N A N A EP16", id: "1dwnDqZWYMo01cyeXruCdExLE08Hc3SNr" },
+      { titulo: "N A N A EP17", id: "1jr0jlV1NKz7IbboOie2H8hnKVVdy5SW4" },
+      { titulo: "N A N A EP18", id: "1ape2-EtMEDi8TjBar7VwkVvil3MpPdyI" },
+      { titulo: "N A N A EP19", id: "1pL0t5SM7en4Y01FTs_e4T1SbKFtwjwq8" },
+      { titulo: "N A N A EP20", id: "1FWNbqN-QgE01C4uMIhQq3lToNE1YWg_w" },
+      { titulo: "N A N A EP21", id: "1-UT6thYJy6jvVPFQTrMCJlQotMsQDsmU" },
+      { titulo: "N A N A EP22", id: "143e69uEYWHDA4f7CRa3zYm-7yH95qurA" },
+      { titulo: "N A N A EP23", id: "1OyYIeh8YawaA_-6UqAiBld-KyDlwxVXt" },
+      { titulo: "N A N A EP24", id: "1lXxbySZY7fmR25kVrtojQbRW7I9gyu5C" },
+      { titulo: "N A N A EP25", id: "1WYbzT2rCO6flkDL79QajJkyrZ5OrpPEV" },
+      { titulo: "N A N A EP26", id: "1J4OrK2UMoA8QQcWP8bDIg6Y8Qto4t-5w" },
+      { titulo: "N A N A EP27", id: "1dhLzKDuNrwcFcNzas3id8H0ENItPCGWA" },
+      { titulo: "N A N A EP28", id: "1Wv7rvgFo0L_4UjPAsnTHHt9Jvq-AdXr4" },
+      { titulo: "N A N A EP29", id: "1EGubt68sRgxvzRMczK1M_xMGGx9cqo4d" },
+      { titulo: "N A N A EP30", id: "1ApWokjwSKZab4ciC1XKrhsvYDsNihnOS" },
+      { titulo: "N A N A EP31", id: "1ngCzsdKy7DP6LSI8cRobbiN5-3S-SRdk" },
+      { titulo: "N A N A EP32", id: "1sQL27DdWtc72DSQ_QF-NdEU3dvVzGMZC" },
+      { titulo: "N A N A EP33", id: "1I9zF5gNlLI_AwEKh1rlqP0u7B5PsOFNe" },
+      { titulo: "N A N A EP34", id: "1UflB2CEmGJVSn3Oi9updGYdhp3NyZhZQ" },
+      { titulo: "N A N A EP35", id: "112pDVWKj3pae2ea7X3pzy0p9lbLPMZi8" },
+      { titulo: "N A N A EP36", id: "1W2z0N_b2rl5Po8i3LdvflqPqsndNC9AK" },
+      { titulo: "N A N A EP37", id: "142SU_hHCGlysXZP5WrBKmtenkcO0L2i_" },
+      { titulo: "N A N A EP38", id: "1JD6DETJMfaejitat2AshhvwZdVQ2pslr" },
+      { titulo: "N A N A EP39", id: "1bEYoJORAsXmjp9G0-VaqMvd2PstFM4jx" },
+      { titulo: "N A N A EP40", id: "1enBy2U0dEVcX-C_zzgZUFBDqnTA5tX8r" },
+      { titulo: "N A N A EP41", id: "1bdjk4lD4Cs7R8zgIZ8k7T0OA8V_O_a3v" },
+      { titulo: "N A N A EP42", id: "1gDLZfys6AcXI_c5N8caUY9ABsoY08Iji" },
+      { titulo: "N A N A EP43", id: "1uRsJ7GTsGqJPMuPh1SboEdTrTpK_XH2k" },
+      { titulo: "N A N A EP44", id: "1HHZbOj7xMFL4wFPHPPr3NU6-XZhVGRR5" },
+      { titulo: "N A N A EP45", id: "1lc6QSGn3BK639oUngo8YM34PsX3v8TpA" },
+      { titulo: "N A N A EP46", id: "17sE7pTfnG9lZLNE909pHuKPOdHyHLXz3" },
+      { titulo: "N A N A EP47", id: "1wXRw1E9_JWjdJl7DpmlJIHPBMg4ktfPW" }
+    ];
+
+    let indiceAtual = 0;
+    const iframe = document.getElementById("player");
+    const tituloEl = document.getElementById("titulo");
+    const btnPrev = document.getElementById("btn-anterior");
+    const btnNext = document.getElementById("btn-proximo");
+
+    const STORAGE_KEY = "nana_player_progress";
+
+    function carregarProgresso() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          if (data.episodio !== undefined && data.episodio >= 0 && data.episodio < episodios.length) {
+            indiceAtual = data.episodio;
+          }
+          return data.tempo || 0;
+        } catch (e) {}
+      }
+      return 0;
+    }
+
+    function salvarProgresso(tempoAtual = 0) {
+      const data = { episodio: indiceAtual, tempo: Math.floor(tempoAtual) };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function carregarEpisodio() {
+      if (indiceAtual < 0 || indiceAtual >= episodios.length) return;
+
+      const ep = episodios[indiceAtual];
+      iframe.src = `https://drive.google.com/file/d/${ep.id}/preview`;
+      tituloEl.textContent = ep.titulo;
+
+      btnPrev.disabled = indiceAtual === 0;
+      btnNext.disabled = indiceAtual === episodios.length - 1;
+    }
+
+    function anterior() {
+      if (indiceAtual > 0) {
+        salvarProgresso();
+        indiceAtual--;
+        carregarEpisodio();
+      }
+    }
+
+    function proximo() {
+      if (indiceAtual < episodios.length - 1) {
+        salvarProgresso();
+        indiceAtual++;
+        carregarEpisodio();
+      }
+    }
+
+    // Botão EXIT - fecha a janela (funciona se aberta como popup)
+    function voltar() {
+        salvarProgresso();
+        window.location.href = "page2.html";
+      }
+    
+
+
+
+    // ────────────────────────────────────────────────
+    //   TENTATIVA DE RESTAURAR TEMPO AO CARREGAR
+    // ────────────────────────────────────────────────
+    let tempoSalvo = carregarProgresso();
+
+    iframe.addEventListener('load', () => {
+      // Tenta aplicar o tempo salvo (funciona parcialmente no embed do Drive)
+      if (tempoSalvo > 0) {
+        setTimeout(() => {
+          try {
+            // Tentativa de seek via postMessage (pouco confiável, mas tenta)
+            iframe.contentWindow.postMessage({ method: 'seek', value: tempoSalvo }, '*');
+          } catch (e) {
+            console.log("Não foi possível restaurar tempo exato:", e);
+          }
+        }, 2500); // espera o player carregar
+      }
+    });
+
+    // Salva progresso a cada 15 segundos enquanto assiste
+    setInterval(() => {
+      // Não temos currentTime exato, mas salvamos o episódio atual
+      // (o tempo só é salvo se o usuário pausar ou mudar de episódio)
+      salvarProgresso(tempoSalvo); // atualiza apenas o episódio
+    }, 15000);
+
+    // Salva quando a página for fechada/recarregada
+    window.addEventListener('beforeunload', () => {
+      salvarProgresso(tempoSalvo);
+    });
+
+    // Inicia
+    carregarEpisodio();
+  </script>
+  
+
+</body>
+</html>
